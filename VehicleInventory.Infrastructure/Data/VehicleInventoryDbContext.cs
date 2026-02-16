@@ -5,9 +5,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-
 namespace VehicleInventory.Infrastructure.Data;
-
 public class VehicleInventoryDbContext : DbContext
 {
     public VehicleInventoryDbContext(DbContextOptions<VehicleInventoryDbContext> options)
@@ -26,7 +24,6 @@ public class VehicleInventoryDbContext : DbContext
         modelBuilder.Entity<VehicleTypeRow>().ToTable("VehicleType");
         modelBuilder.Entity<VehicleStatusRow>().ToTable("VehicleStatus");
         modelBuilder.Entity<VehicleLocationRow>().ToTable("VehicleLocation");
-
         modelBuilder.Entity<VehicleRow>().HasKey(x => x.Id);
         modelBuilder.Entity<InventoryRow>().HasKey(x => x.Id);
         modelBuilder.Entity<VehicleTypeRow>().HasKey(x => x.Id);
