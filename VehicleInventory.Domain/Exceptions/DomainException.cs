@@ -4,9 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VehicleInventory.Domain.Exceptions
+namespace VehicleInventory.Domain.Exceptions;
+public class DomainException : Exception
 {
-    internal class DomainException
-    {
-    }
+    public DomainException(string message) : base(message) { }
 }

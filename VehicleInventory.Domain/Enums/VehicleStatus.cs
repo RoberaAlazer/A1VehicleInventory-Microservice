@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VehicleInventory.Domain.Enums
+namespace VehicleInventory.Domain.Enums;
+public enum VehicleStatus
 {
-    internal class VehicleStatus
-    {
-    }
+    Available = 1,
+    Reserved = 2,
+    Rented = 3,
+    Serviced = 4
 }
