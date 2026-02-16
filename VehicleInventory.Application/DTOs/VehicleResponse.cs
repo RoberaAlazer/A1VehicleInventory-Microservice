@@ -13,7 +13,8 @@ namespace VehicleInventory.Application.DTOs
         public string VehicleType { get; set; } = "";
         public string Location { get; set; } = "";
         public string StatusId { get; set; } = "";
+        public string StatusName { get; set; } = "";
 
-        public string StatusName { get; set; }
+
     }
 }
