@@ -4,17 +4,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace VehicleInventory.Application.DTOs
+using VehicleInventory.Domain.Enums;
+
+namespace VehicleInventory.Application.DTOs;
+
+public class VehicleResponse
 {
-  public  class VehicleResponse
-    {
-        public int Id { get; set; }
-        public string VehicleCode { get; set; } = "";
-        public string VehicleType { get; set; } = "";
-        public string Location { get; set; } = "";
-        public string StatusId { get; set; } = "";
-        public string StatusName { get; set; } = "";
-
-
-    }
+    public int Id { get; set; }
+    public string VehicleCode { get; set; } = "";
+    public int LocationId { get; set; }
+    public string VehicleType { get; set; } = "";
+    public VehicleStatus Status { get; set; }
 }
