@@ -6,7 +6,6 @@ using VehicleInventory.Domain.Exceptions;
 using VehicleInventory.Infrastructure.Data;
 
 namespace VehicleInventory.Infrastructure.Repositories;
-
 public class VehicleRepository : IVehicleRepository
 {
     private readonly VehicleInventoryDbContext _db;
@@ -21,15 +20,17 @@ public class VehicleRepository : IVehicleRepository
 
         if (inv?.Vehicle == null) return null;
 
-        return new Vehicle(
-            id: inv.Vehicle.Id,
+        var domain = new Vehicle(
             vehicleCode: $"{inv.Vehicle.Make}-{inv.Vehicle.Model}-{inv.Vehicle.Id}",
             locationId: inv.VehicleLocationId,
-            vehicleType: inv.Vehicle.VehicleType?.Name ?? "Unknown",
-            status: MapStatus(inv.VehicleStatusId)
+            vehicleType: inv.Vehicle.VehicleType?.Name ?? "unknown"
         );
-    }
 
+        SetStatus(domain, inv.VehicleStatusId);
+        SetId(domain, inv.Vehicle.Id);
+
+        return domain;
+    }
     public async Task<List<Vehicle>> GetAllAsync()
     {
         var list = await _db.Inventory
@@ -43,22 +44,24 @@ public class VehicleRepository : IVehicleRepository
         {
             if (inv.Vehicle == null) continue;
 
-            result.Add(new Vehicle(
-                id: inv.Vehicle.Id,
+            var domain = new Vehicle(
                 vehicleCode: $"{inv.Vehicle.Make}-{inv.Vehicle.Model}-{inv.Vehicle.Id}",
                 locationId: inv.VehicleLocationId,
-                vehicleType: inv.Vehicle.VehicleType?.Name ?? "Unknown",
-                status: MapStatus(inv.VehicleStatusId)
-            ));
+                vehicleType: inv.Vehicle.VehicleType?.Name ?? "unknown"
+            );
+
+            SetStatus(domain, inv.VehicleStatusId);
+            SetId(domain, inv.Vehicle.Id);
+
+            result.Add(domain);
         }
 
         return result;
     }
-
     public async Task<int> CreateAsync(Vehicle vehicle)
     {
         if (string.IsNullOrWhiteSpace(vehicle.VehicleCode))
-            throw new DomainException("VehicleCode is required.");
+            throw new DomainException("vehicleCode is required.");
 
         var make = vehicle.VehicleCode.Trim();
         var model = "Model";
@@ -98,13 +101,11 @@ public class VehicleRepository : IVehicleRepository
             VehicleStatusId = (int)vehicle.Status,
             LastUpdated = DateTime.UtcNow
         };
-
         _db.Inventory.Add(inv);
         await _db.SaveChangesAsync();
 
         return row.Id;
     }
-
     public async Task UpdateAsync(Vehicle vehicle)
     {
         var inv = await _db.Inventory.FirstOrDefaultAsync(x => x.VehicleId == vehicle.Id);
@@ -116,7 +117,6 @@ public class VehicleRepository : IVehicleRepository
 
         await _db.SaveChangesAsync();
     }
-
     public async Task DeleteAsync(int id)
     {
         var inv = await _db.Inventory.FirstOrDefaultAsync(x => x.VehicleId == id);
@@ -127,16 +127,20 @@ public class VehicleRepository : IVehicleRepository
 
         await _db.SaveChangesAsync();
     }
-
-    private static VehicleStatus MapStatus(int statusId)
+    private static void SetStatus(Vehicle vehicle, int statusId)
     {
-        return statusId switch
-        {
-            1 => VehicleStatus.Available,
-            2 => VehicleStatus.Reserved,
-            3 => VehicleStatus.Rented,
-            4 => VehicleStatus.Serviced,
-            _ => throw new DomainException("Invalid status in database.")
-        };
+        var status = (VehicleStatus)statusId;
+
+        if (status == VehicleStatus.Available) vehicle.MarkAvailable();
+        else if (status == VehicleStatus.Reserved) vehicle.MarkReserved();
+        else if (status == VehicleStatus.Rented) vehicle.MarkRented();
+        else if (status == VehicleStatus.Serviced) vehicle.MarkServiced();
+        else throw new DomainException("Invalid status in database.");
+    }
+
+    private static void SetId(Vehicle vehicle, int id)
+    {
+        var prop = typeof(Vehicle).GetProperty("Id");
+        prop?.SetValue(vehicle, id);
     }
 }
