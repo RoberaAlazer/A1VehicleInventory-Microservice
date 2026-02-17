@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using VehicleInventory.Application.Interfaces;
 using VehicleInventory.Domain.Entities;
 using VehicleInventory.Domain.Enums;
@@ -16,23 +11,25 @@ public class VehicleRepository : IVehicleRepository
 {
     private readonly VehicleInventoryDbContext _db;
     public VehicleRepository(VehicleInventoryDbContext db) => _db = db;
+
     public async Task<Vehicle?> GetByIdAsync(int id)
     {
         var inv = await _db.Inventory
             .Include(x => x.Vehicle)
             .ThenInclude(v => v!.VehicleType)
             .FirstOrDefaultAsync(x => x.VehicleId == id);
+
         if (inv?.Vehicle == null) return null;
-        var domain = new Vehicle(
+
+        return new Vehicle(
+            id: inv.Vehicle.Id,
             vehicleCode: $"{inv.Vehicle.Make}-{inv.Vehicle.Model}-{inv.Vehicle.Id}",
             locationId: inv.VehicleLocationId,
-            vehicleType: inv.Vehicle.VehicleType?.Name ?? "Unknown"
+            vehicleType: inv.Vehicle.VehicleType?.Name ?? "Unknown",
+            status: MapStatus(inv.VehicleStatusId)
         );
-        SetStatus(domain, inv.VehicleStatusId);
-        SetId(domain, inv.Vehicle.Id);
-
-        return domain;
     }
+
     public async Task<List<Vehicle>> GetAllAsync()
     {
         var list = await _db.Inventory
@@ -46,20 +43,18 @@ public class VehicleRepository : IVehicleRepository
         {
             if (inv.Vehicle == null) continue;
 
-            var domain = new Vehicle(
+            result.Add(new Vehicle(
+                id: inv.Vehicle.Id,
                 vehicleCode: $"{inv.Vehicle.Make}-{inv.Vehicle.Model}-{inv.Vehicle.Id}",
                 locationId: inv.VehicleLocationId,
-                vehicleType: inv.Vehicle.VehicleType?.Name ?? "Unknown"
-            );
-
-            SetStatus(domain, inv.VehicleStatusId);
-            SetId(domain, inv.Vehicle.Id);
-
-            result.Add(domain);
+                vehicleType: inv.Vehicle.VehicleType?.Name ?? "Unknown",
+                status: MapStatus(inv.VehicleStatusId)
+            ));
         }
 
         return result;
     }
+
     public async Task<int> CreateAsync(Vehicle vehicle)
     {
         if (string.IsNullOrWhiteSpace(vehicle.VehicleCode))
@@ -77,6 +72,7 @@ public class VehicleRepository : IVehicleRepository
                 model = parts[1].Trim();
             }
         }
+
         var type = await _db.VehicleTypes.FirstOrDefaultAsync(x => x.Name == vehicle.VehicleType);
         if (type == null)
         {
@@ -84,14 +80,17 @@ public class VehicleRepository : IVehicleRepository
             _db.VehicleTypes.Add(type);
             await _db.SaveChangesAsync();
         }
+
         var row = new VehicleRow
         {
             Make = make,
             Model = model,
             VehicleTypeId = type.Id
         };
+
         _db.Vehicles.Add(row);
         await _db.SaveChangesAsync();
+
         var inv = new InventoryRow
         {
             VehicleId = row.Id,
@@ -102,8 +101,10 @@ public class VehicleRepository : IVehicleRepository
 
         _db.Inventory.Add(inv);
         await _db.SaveChangesAsync();
+
         return row.Id;
     }
+
     public async Task UpdateAsync(Vehicle vehicle)
     {
         var inv = await _db.Inventory.FirstOrDefaultAsync(x => x.VehicleId == vehicle.Id);
@@ -115,6 +116,7 @@ public class VehicleRepository : IVehicleRepository
 
         await _db.SaveChangesAsync();
     }
+
     public async Task DeleteAsync(int id)
     {
         var inv = await _db.Inventory.FirstOrDefaultAsync(x => x.VehicleId == id);
@@ -125,19 +127,16 @@ public class VehicleRepository : IVehicleRepository
 
         await _db.SaveChangesAsync();
     }
-    private static void SetStatus(Vehicle vehicle, int statusId)
-    {
-        var status = (VehicleStatus)statusId;
 
-        if (status == VehicleStatus.Available) vehicle.MarkAvailable();
-        else if (status == VehicleStatus.Reserved) vehicle.MarkReserved();
-        else if (status == VehicleStatus.Rented) vehicle.MarkRented();
-        else if (status == VehicleStatus.Serviced) vehicle.MarkServiced();
-        else throw new DomainException("Invalid status in database.");
-    }
-    private static void SetId(Vehicle vehicle, int id)
+    private static VehicleStatus MapStatus(int statusId)
     {
-        var prop = typeof(Vehicle).GetProperty("Id");
-        prop?.SetValue(vehicle, id);
+        return statusId switch
+        {
+            1 => VehicleStatus.Available,
+            2 => VehicleStatus.Reserved,
+            3 => VehicleStatus.Rented,
+            4 => VehicleStatus.Serviced,
+            _ => throw new DomainException("Invalid status in database.")
+        };
     }
 }
