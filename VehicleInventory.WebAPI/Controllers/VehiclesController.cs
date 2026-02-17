@@ -8,7 +8,6 @@ namespace VehicleInventory.WebAPI.Controllers;
 public class VehiclesController : ControllerBase
 {
     private readonly VehicleService _service;
-
     public VehiclesController(VehicleService service) => _service = service;
 
     [HttpGet]
@@ -36,9 +35,8 @@ public class VehiclesController : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
-
     [HttpPut("{id:int}/status")]
-    public async Task<ActionResult> UpdateStatus(int id, [FromBody] UpdateVehicleStatusRequest req)
+    public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateVehicleStatusRequest req)
     {
         try
         {
@@ -50,8 +48,9 @@ public class VehiclesController : ControllerBase
             return BadRequest(new { error = ex.Message });
         }
     }
+
     [HttpDelete("{id:int}")]
-    public async Task<ActionResult> Delete(int id)
+    public async Task<IActionResult> Delete(int id)
     {
         try
         {
