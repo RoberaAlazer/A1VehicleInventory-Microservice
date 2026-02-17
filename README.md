@@ -83,6 +83,7 @@ The solution follows Clean Architecture. Each layer has one responsibility.
 1. Clone the repo or unzipp from Github
 2. Open the solution in Visual Studio
 3. Use Database provided FROM PROG3176 Instructor	Srdj Toholj
+
 4.Example {
   "ConnectionStrings": {
     "VehicleInventoryDb": "Server=localhost\\SQLEXPRESS;Database=VehicleInventoryDb;Trusted_Connection=True;TrustServerCertificate=True;"
