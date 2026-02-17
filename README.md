@@ -46,8 +46,8 @@ The solution follows Clean Architecture. Each layer has one responsibility.
 
 ## Properties
 - Id
--VehicleCode
--VehicleType
+- VehicleCode
+- -VehicleType
 - LocationId
 -  Status
 
