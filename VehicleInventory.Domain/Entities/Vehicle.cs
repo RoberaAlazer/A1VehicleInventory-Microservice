@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using VehicleInventory.Domain.Enums;
 using VehicleInventory.Domain.Exceptions;
-using VehicleInventory.Domain.Enums;
 
 namespace VehicleInventory.Domain.Entities
 {
@@ -33,47 +28,54 @@ namespace VehicleInventory.Domain.Entities
             Status = VehicleStatus.Available;
         }
 
+        public Vehicle(int id, string vehicleCode, int locationId, string vehicleType, VehicleStatus status)
+        {
+            Id = id;
+            VehicleCode = vehicleCode;
+            LocationId = locationId;
+            VehicleType = vehicleType;
+            Status = status;
+        }
+
         public void MarkAvailable()
         {
-            if (Status == VehicleStatus.Available)
-                throw new DomainException("Reserved cars cannot be mark as Available.");
+            if (Status == VehicleStatus.Reserved)
+                throw new DomainException("Reserved vehicle cannot be marked as available without release.");
             Status = VehicleStatus.Available;
         }
 
         public void MarkReserved()
         {
             if (Status == VehicleStatus.Reserved)
-                throw new DomainException("Available cars cannot be mark as Reserved.");
-            if (Status  == VehicleStatus.Serviced)
-                throw new DomainException("Serviced cars cannot be mark as under Serviced.");
+                throw new DomainException("Vehicle is already reserved.");
+            if (Status == VehicleStatus.Serviced)
+                throw new DomainException("Serviced vehicle cannot be reserved.");
             Status = VehicleStatus.Reserved;
         }
-         public void MarkRented()
+
+        public void MarkRented()
         {
             if (Status == VehicleStatus.Rented)
-                throw new DomainException("vehicle cannot be rented if it is already rented.");
+                throw new DomainException("Vehicle cannot be rented if it is already rented.");
             if (Status == VehicleStatus.Reserved)
-                throw new DomainException("vehicle cannot be rented if it is reserved.");
+                throw new DomainException("Vehicle cannot be rented if it is reserved.");
             if (Status == VehicleStatus.Serviced)
-                throw new DomainException("vehicle cannot be rented if it is under service.");
-
+                throw new DomainException("Vehicle cannot be rented if it is under service.");
             Status = VehicleStatus.Rented;
         }
+
         public void MarkServiced()
         {
             if (Status == VehicleStatus.Rented)
-                throw new DomainException("rented vehicle cannot be marked as serviced.");
-
+                throw new DomainException("Rented vehicle cannot be marked as serviced.");
             Status = VehicleStatus.Serviced;
         }
+
         public void ReleaseReservation()
         {
             if (Status != VehicleStatus.Reserved)
-                throw new DomainException("vehicle is not reserved.");
-
+                throw new DomainException("Vehicle is not reserved.");
             Status = VehicleStatus.Available;
         }
-
-
     }
 }
