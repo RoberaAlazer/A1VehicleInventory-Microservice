@@ -16,10 +16,10 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddDbContext<VehicleInventoryDbContext>(options =>
+        services.AddDbContext<RAVehicleInventoryDbContext>(options =>
             options.UseSqlServer(configuration.GetConnectionString("VehicleInventoryDb")));
 
-        services.AddScoped<IVehicleRepository, VehicleRepository>();
+        services.AddScoped<RAIVehicleRepository, RAVehicleRepository>();
 
         return services;
     }

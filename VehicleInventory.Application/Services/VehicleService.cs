@@ -8,11 +8,11 @@ namespace VehicleInventory.Application.Services;
 
 public class VehicleService
 {
-    private readonly IVehicleRepository _repo;
+    private readonly RAIVehicleRepository _repo;
 
-    public VehicleService(IVehicleRepository repo) => _repo = repo;
+    public VehicleService(RAIVehicleRepository repo) => _repo = repo;
 
-    public async Task<int> CreateVehicleAsync(CreateVehicleRequest req)
+    public async Task<int> CreateVehicleAsync(RACreateVehicleRequest req)
     {
         if (string.IsNullOrWhiteSpace(req.VehicleCode))
             throw new DomainException("VehicleCode is required.");
@@ -27,13 +27,13 @@ public class VehicleService
         return await _repo.CreateAsync(vehicle);
     }
 
-    public async Task<VehicleResponse?> GetVehicleByIdAsync(int id)
+    public async Task<RAVehicleResponse?> GetVehicleByIdAsync(int id)
     {
         var v = await _repo.GetByIdAsync(id);
         return v == null ? null : ToResponse(v);
     }
 
-    public async Task<List<VehicleResponse>> GetAllVehiclesAsync()
+    public async Task<List<RAVehicleResponse>> GetAllVehiclesAsync()
     {
         var list = await _repo.GetAllAsync();
         return list.Select(ToResponse).ToList();
@@ -70,7 +70,7 @@ public class VehicleService
 
     public Task DeleteVehicleAsync(int id) => _repo.DeleteAsync(id);
 
-    private static VehicleResponse ToResponse(Vehicle v) => new VehicleResponse
+    private static RAVehicleResponse ToResponse(Vehicle v) => new RAVehicleResponse
     {
         Id = v.Id,
         VehicleCode = v.VehicleCode,

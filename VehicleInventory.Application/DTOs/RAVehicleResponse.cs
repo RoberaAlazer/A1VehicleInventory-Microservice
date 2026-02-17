@@ -8,7 +8,7 @@ using VehicleInventory.Domain.Enums;
 
 namespace VehicleInventory.Application.DTOs;
 
-public class VehicleResponse
+public class RAVehicleResponse
 {
     public int Id { get; set; }
     public string VehicleCode { get; set; } = "";

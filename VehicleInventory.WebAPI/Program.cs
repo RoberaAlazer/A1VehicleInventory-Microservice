@@ -6,7 +6,7 @@ using VehicleInventory.Infrastructure;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddDbContext<VehicleInventoryDbContext>(options =>
+builder.Services.AddDbContext<RAVehicleInventoryDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("VehicleInventoryDb")));
 
 builder.Services.AddControllers();

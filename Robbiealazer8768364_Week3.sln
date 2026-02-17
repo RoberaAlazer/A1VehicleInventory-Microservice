@@ -11,13 +11,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Maintenance.WebAPI", "Maint
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VehicleInventory.App", "VehicleInventory.App", "{F781A3BC-4344-46B5-A062-D91EC4AB0D8E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleInventory.Domain", "VehicleInventory.Domain\VehicleInventory.Domain.csproj", "{9F971621-77D1-48DD-A5CB-8B2A36D083A4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAVehicleInventory.Domain", "VehicleInventory.Domain\RAVehicleInventory.Domain.csproj", "{9F971621-77D1-48DD-A5CB-8B2A36D083A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleInventory.Application", "VehicleInventory.Application\VehicleInventory.Application.csproj", "{31A4D617-F2F4-4DBB-A904-27F4C5A2ADA0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAVehicleInventory.Application", "VehicleInventory.Application\RAVehicleInventory.Application.csproj", "{31A4D617-F2F4-4DBB-A904-27F4C5A2ADA0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleInventory.Infrastructure", "VehicleInventory.Infrastructure\VehicleInventory.Infrastructure.csproj", "{8C23085F-4B4D-4910-AF58-F83569CB2F2C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAVehicleInventory.Infrastructure", "VehicleInventory.Infrastructure\RAVehicleInventory.Infrastructure.csproj", "{8C23085F-4B4D-4910-AF58-F83569CB2F2C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VehicleInventory.WebAPI", "VehicleInventory.WebAPI\VehicleInventory.WebAPI.csproj", "{015491A7-AA58-4B83-B725-138E519729CD}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RAVehicleInventory.WebAPI", "VehicleInventory.WebAPI\RAVehicleInventory.WebAPI.csproj", "{015491A7-AA58-4B83-B725-138E519729CD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

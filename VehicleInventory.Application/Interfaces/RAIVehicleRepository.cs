@@ -7,7 +7,7 @@ using VehicleInventory.Domain.Entities;
 using VehicleInventory.Domain.Entities;
 namespace VehicleInventory.Application.Interfaces;
 
-public interface IVehicleRepository
+public interface RAIVehicleRepository
 {
     Task<Vehicle?> GetByIdAsync(int id);
     Task<List<Vehicle>> GetAllAsync();

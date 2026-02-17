@@ -12,8 +12,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\VehicleInventory.Application\VehicleInventory.Application.csproj" />
-    <ProjectReference Include="..\VehicleInventory.Domain\VehicleInventory.Domain.csproj" />
+    <ProjectReference Include="..\VehicleInventory.Application\RAVehicleInventory.Application.csproj" />
+    <ProjectReference Include="..\VehicleInventory.Domain\RAVehicleInventory.Domain.csproj" />
   </ItemGroup>
 
 </Project>

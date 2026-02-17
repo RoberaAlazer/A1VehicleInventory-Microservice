@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace VehicleInventory.Infrastructure.Data.Row
 {
-    public class VehicleTypeRow
+  public class RAVehicleStatusRow
     {
         public int Id { get; set; }
         public string Name { get; set; } = "";

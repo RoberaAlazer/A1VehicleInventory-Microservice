@@ -6,10 +6,10 @@ using VehicleInventory.Domain.Exceptions;
 using VehicleInventory.Infrastructure.Data;
 
 namespace VehicleInventory.Infrastructure.Repositories;
-public class VehicleRepository : IVehicleRepository
+public class RAVehicleRepository : RAIVehicleRepository
 {
-    private readonly VehicleInventoryDbContext _db;
-    public VehicleRepository(VehicleInventoryDbContext db) => _db = db;
+    private readonly RAVehicleInventoryDbContext _db;
+    public RAVehicleRepository(RAVehicleInventoryDbContext db) => _db = db;
 
     public async Task<Vehicle?> GetByIdAsync(int id)
     {
@@ -79,12 +79,12 @@ public class VehicleRepository : IVehicleRepository
         var type = await _db.VehicleTypes.FirstOrDefaultAsync(x => x.Name == vehicle.VehicleType);
         if (type == null)
         {
-            type = new VehicleTypeRow { Name = vehicle.VehicleType };
+            type = new RAVehicleTypeRow { Name = vehicle.VehicleType };
             _db.VehicleTypes.Add(type);
             await _db.SaveChangesAsync();
         }
 
-        var row = new VehicleRow
+        var row = new RAVehicleRow
         {
             Make = make,
             Model = model,
@@ -94,7 +94,7 @@ public class VehicleRepository : IVehicleRepository
         _db.Vehicles.Add(row);
         await _db.SaveChangesAsync();
 
-        var inv = new InventoryRow
+        var inv = new RAInventoryRow
         {
             VehicleId = row.Id,
             VehicleLocationId = vehicle.LocationId,

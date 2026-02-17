@@ -11,11 +11,11 @@ public class VehiclesController : ControllerBase
     public VehiclesController(VehicleService service) => _service = service;
 
     [HttpGet]
-    public async Task<ActionResult<List<VehicleResponse>>> GetAll()
+    public async Task<ActionResult<List<RAVehicleResponse>>> GetAll()
         => Ok(await _service.GetAllVehiclesAsync());
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<VehicleResponse>> GetById(int id)
+    public async Task<ActionResult<RAVehicleResponse>> GetById(int id)
     {
         var v = await _service.GetVehicleByIdAsync(id);
         if (v == null) return NotFound();
@@ -23,7 +23,7 @@ public class VehiclesController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult> Create([FromBody] CreateVehicleRequest req)
+    public async Task<ActionResult> Create([FromBody] RACreateVehicleRequest req)
     {
         try
         {
@@ -36,7 +36,7 @@ public class VehiclesController : ControllerBase
         }
     }
     [HttpPut("{id:int}/status")]
-    public async Task<IActionResult> UpdateStatus(int id, [FromBody] UpdateVehicleStatusRequest req)
+    public async Task<IActionResult> UpdateStatus(int id, [FromBody] RAUpdateVehicleStatusRequest req)
     {
         try
         {

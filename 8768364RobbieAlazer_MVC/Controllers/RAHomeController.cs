@@ -4,11 +4,11 @@ using System.Diagnostics;
 
 namespace _8768364RobbieAlazer_MVC.Controllers
 {
-    public class HomeController : Controller
+    public class RAHomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<RAHomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public RAHomeController(ILogger<RAHomeController> logger)
         {
             _logger = logger;
         }
