@@ -6,6 +6,10 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddHttpClient("InventoryApi", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration["InventoryApi:BaseUrl"]!);
+});
 
 builder.Services.AddDbContext<CustomerProfileContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));

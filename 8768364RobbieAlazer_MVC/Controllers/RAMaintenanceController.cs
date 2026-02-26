@@ -4,11 +4,11 @@ using System.Net.Http.Json;
 
 namespace _8768364RobbieAlazer_MVC.Controllers
 {
-    public class RAMaintenanceController : Controller
+    public class MaintenanceController : Controller
     {
         private readonly IHttpClientFactory _httpClientFactory;
 
-        public RAMaintenanceController(IHttpClientFactory httpClientFactory)
+        public MaintenanceController(IHttpClientFactory httpClientFactory)
         {
             _httpClientFactory = httpClientFactory;
         }

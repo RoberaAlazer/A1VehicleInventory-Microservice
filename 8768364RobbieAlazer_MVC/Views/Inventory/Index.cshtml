@@ -1,0 +1,77 @@
+﻿@model List<_8768364RobbieAlazer_MVC.Controllers.VehicleDto>
+
+@{
+    ViewData["Title"] = "Inventory";
+}
+
+<h2>Inventory</h2>
+
+@if (TempData["Err"] != null)
+{
+    <div class="alert alert-danger">@TempData["Err"]</div>
+}
+
+<hr />
+
+<h4>Add Vehicle</h4>
+<form asp-action="Create" method="post" class="row g-2">
+    <div class="col-md-4">
+        <input name="VehicleCode" class="form-control" placeholder="VehicleCode (CAR-1001)" required />
+    </div>
+    <div class="col-md-2">
+        <input name="LocationId" type="number" class="form-control" placeholder="LocationId" required />
+    </div>
+    <div class="col-md-3">
+        <input name="VehicleType" class="form-control" placeholder="VehicleType (SUV)" required />
+    </div>
+    <div class="col-md-3">
+        <button class="btn btn-primary w-100" type="submit">Create</button>
+    </div>
+</form>
+
+<hr />
+
+<h4>Vehicles</h4>
+<table class="table table-dark table-striped">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Code</th>
+            <th>Location</th>
+            <th>Type</th>
+            <th>Status</th>
+            <th>Change Status</th>
+            <th>Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var v in Model)
+        {
+            <tr>
+                <td>@v.Id</td>
+                <td>@v.VehicleCode</td>
+                <td>@v.LocationId</td>
+                <td>@v.VehicleType</td>
+                <td>@v.Status</td>
+                <td>
+                    <form asp-action="UpdateStatus" method="post" class="d-flex gap-2">
+                        <input type="hidden" name="id" value="@v.Id" />
+                        <select name="statusId" class="form-select form-select-sm" required>
+                            <option value="1">Available</option>
+                            <option value="2">Reserved</option>
+                            <option value="3">Rented</option>
+                            <option value="4">Serviced</option>
+                        </select>
+                        <button class="btn btn-sm btn-warning" type="submit">Update</button>
+                    </form>
+                </td>
+                <td>
+                    <form asp-action="Delete" method="post">
+                        <input type="hidden" name="id" value="@v.Id" />
+                        <button class="btn btn-sm btn-danger" type="submit">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
