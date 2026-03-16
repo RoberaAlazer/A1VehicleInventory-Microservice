@@ -9,6 +9,7 @@ namespace VehicleInventory.Infrastructure.Repositories;
 public class RAVehicleRepository : RAIVehicleRepository
 {
     private readonly RAVehicleInventoryDbContext _db;
+
     public RAVehicleRepository(RAVehicleInventoryDbContext db) => _db = db;
 
     public async Task<Vehicle?> GetByIdAsync(int id)
@@ -20,17 +21,13 @@ public class RAVehicleRepository : RAIVehicleRepository
 
         if (inv?.Vehicle == null) return null;
 
-        var domain = new Vehicle(
-            vehicleCode: $"{inv.Vehicle.Make}-{inv.Vehicle.Model}-{inv.Vehicle.Id}",
-            locationId: inv.VehicleLocationId,
-            vehicleType: inv.Vehicle.VehicleType?.Name ?? "unknown"
-        );
+        var status = (VehicleStatus)inv.VehicleStatusId;
+        var code = $"{inv.Vehicle.Make}-{inv.Vehicle.Model}-{inv.Vehicle.Id}";
+        var type = inv.Vehicle.VehicleType?.Name ?? "Unknown";
 
-        SetStatus(domain, inv.VehicleStatusId);
-        SetId(domain, inv.Vehicle.Id);
-
-        return domain;
+        return Vehicle.Reconstitute(inv.Vehicle.Id, code, inv.VehicleLocationId, type, status);
     }
+
     public async Task<List<Vehicle>> GetAllAsync()
     {
         var list = await _db.Inventory
@@ -44,53 +41,36 @@ public class RAVehicleRepository : RAIVehicleRepository
         {
             if (inv.Vehicle == null) continue;
 
-            var domain = new Vehicle(
-                vehicleCode: $"{inv.Vehicle.Make}-{inv.Vehicle.Model}-{inv.Vehicle.Id}",
-                locationId: inv.VehicleLocationId,
-                vehicleType: inv.Vehicle.VehicleType?.Name ?? "unknown"
-            );
+            var status = (VehicleStatus)inv.VehicleStatusId;
+            var code = $"{inv.Vehicle.Make}-{inv.Vehicle.Model}-{inv.Vehicle.Id}";
+            var type = inv.Vehicle.VehicleType?.Name ?? "Unknown";
 
-            SetStatus(domain, inv.VehicleStatusId);
-            SetId(domain, inv.Vehicle.Id);
-
-            result.Add(domain);
+            result.Add(Vehicle.Reconstitute(inv.Vehicle.Id, code, inv.VehicleLocationId, type, status));
         }
-
         return result;
     }
     public async Task<int> CreateAsync(Vehicle vehicle)
     {
-        if (string.IsNullOrWhiteSpace(vehicle.VehicleCode))
-            throw new DomainException("vehicleCode is required.");
-
-        var make = vehicle.VehicleCode.Trim();
+        var make = vehicle.VehicleCode.Value;
         var model = "Model";
 
-        if (vehicle.VehicleCode.Contains('-'))
+        if (vehicle.VehicleCode.Value.Contains('-'))
         {
-            var parts = vehicle.VehicleCode.Split('-', StringSplitOptions.RemoveEmptyEntries);
+            var parts = vehicle.VehicleCode.Value.Split('-', StringSplitOptions.RemoveEmptyEntries);
             if (parts.Length >= 2)
             {
                 make = parts[0].Trim();
                 model = parts[1].Trim();
             }
         }
-
-        var type = await _db.VehicleTypes.FirstOrDefaultAsync(x => x.Name == vehicle.VehicleType);
+        var type = await _db.VehicleTypes.FirstOrDefaultAsync(x => x.Name == vehicle.VehicleType.Value);
         if (type == null)
         {
-            type = new RAVehicleTypeRow { Name = vehicle.VehicleType };
+            type = new RAVehicleTypeRow { Name = vehicle.VehicleType.Value };
             _db.VehicleTypes.Add(type);
             await _db.SaveChangesAsync();
         }
-
-        var row = new RAVehicleRow
-        {
-            Make = make,
-            Model = model,
-            VehicleTypeId = type.Id
-        };
-
+        var row = new RAVehicleRow { Make = make, Model = model, VehicleTypeId = type.Id };
         _db.Vehicles.Add(row);
         await _db.SaveChangesAsync();
 
@@ -104,6 +84,7 @@ public class RAVehicleRepository : RAIVehicleRepository
         _db.Inventory.Add(inv);
         await _db.SaveChangesAsync();
 
+        vehicle.ClearDomainEvents();
         return row.Id;
     }
     public async Task UpdateAsync(Vehicle vehicle)
@@ -116,7 +97,9 @@ public class RAVehicleRepository : RAIVehicleRepository
         inv.LastUpdated = DateTime.UtcNow;
 
         await _db.SaveChangesAsync();
+        vehicle.ClearDomainEvents();
     }
+
     public async Task DeleteAsync(int id)
     {
         var inv = await _db.Inventory.FirstOrDefaultAsync(x => x.VehicleId == id);
@@ -126,21 +109,5 @@ public class RAVehicleRepository : RAIVehicleRepository
         if (vehicle != null) _db.Vehicles.Remove(vehicle);
 
         await _db.SaveChangesAsync();
-    }
-    private static void SetStatus(Vehicle vehicle, int statusId)
-    {
-        var status = (VehicleStatus)statusId;
-
-        if (status == VehicleStatus.Available) vehicle.MarkAvailable();
-        else if (status == VehicleStatus.Reserved) vehicle.MarkReserved();
-        else if (status == VehicleStatus.Rented) vehicle.MarkRented();
-        else if (status == VehicleStatus.Serviced) vehicle.MarkServiced();
-        else throw new DomainException("Invalid status in database.");
-    }
-
-    private static void SetId(Vehicle vehicle, int id)
-    {
-        var prop = typeof(Vehicle).GetProperty("Id");
-        prop?.SetValue(vehicle, id);
     }
 }
