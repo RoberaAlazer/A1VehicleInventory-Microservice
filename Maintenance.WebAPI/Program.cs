@@ -1,3 +1,4 @@
+using Maintenance.WebAPI.Middleware;
 using Maintenance.WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,8 +12,8 @@ var app = builder.Build();
 
 app.UseSwagger();
 app.UseSwaggerUI();
-
 app.MapGet("/", () => Results.Redirect("/swagger"));
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 app.MapControllers();
 
