@@ -22,10 +22,9 @@ namespace _8768364RobbieAlazer_MVC.Controllers
         [HttpPost]
         public async Task<IActionResult> History(int vehicleId)
         {
-            var client = _httpClientFactory.CreateClient("MaintenanceApi");
-
+            var client = _httpClientFactory.CreateClient("GatewayClient");
             var repairs = await client.GetFromJsonAsync<List<RepairHistoryViewModel>>(
-                $"api/maintenance/vehicles/{vehicleId}/repairs");
+                $"gateway/maintenance/vehicles/{vehicleId}/repairs");
 
             return View(new RepairHistoryPageViewModel
             {
