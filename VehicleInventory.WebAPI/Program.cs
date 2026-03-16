@@ -2,14 +2,13 @@ using Microsoft.EntityFrameworkCore;
 using VehicleInventory.Infrastructure.Data;
 using VehicleInventory.Application.Services;
 using VehicleInventory.Infrastructure;
-
+using VehicleInventory.WebAPI.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<RAVehicleInventoryDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("VehicleInventoryDb")));
 
 builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<VehicleService>();
@@ -24,7 +23,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
