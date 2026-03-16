@@ -1,41 +1,28 @@
 using Microsoft.EntityFrameworkCore;
 using _8768364RobbieAlazer_MVC.Data;
 
-
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 builder.Services.AddControllersWithViews();
-builder.Services.AddHttpClient("InventoryApi", client =>
-{
-    client.BaseAddress = new Uri(builder.Configuration["InventoryApi:BaseUrl"]!);
-});
 
-builder.Services.AddDbContext<CustomerProfileContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddHttpClient("MaintenanceApi", (sp, client) =>
+builder.Services.AddHttpClient("GatewayClient", (sp, client) =>
 {
     var config = sp.GetRequiredService<IConfiguration>();
-    client.BaseAddress = new Uri(config["MaintenanceApi:BaseUrl"]!);
+    client.BaseAddress = new Uri(config["ApiGateway:BaseUrl"]!);
+    client.DefaultRequestHeaders.Add("X-Api-Key", config["ApiGateway:ApiKey"]!);
 });
-
+builder.Services.AddDbContext<CustomerProfileContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 var app = builder.Build();
-
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
-
 app.UseHttpsRedirection();
 app.UseStaticFiles();
-
 app.UseRouting();
-
 app.UseAuthorization();
-
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
