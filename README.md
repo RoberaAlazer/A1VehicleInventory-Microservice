@@ -1,4 +1,4 @@
-## A2
+## Assignment 2
 ## PROG3176 A2 Robera Robbie Alazer
 
 ## What Was Added in Assignment 2
