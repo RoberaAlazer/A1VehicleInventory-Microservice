@@ -2,7 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using VehicleInventory.Infrastructure.Data;
 using VehicleInventory.Application.Services;
 using VehicleInventory.Infrastructure;
-using VehicleInventory.WebAPI.Middleware;
+using CarRental.SharedKernel.Middleware;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddDbContext<RAVehicleInventoryDbContext>(options =>

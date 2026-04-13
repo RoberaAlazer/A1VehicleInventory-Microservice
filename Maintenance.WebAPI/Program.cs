@@ -1,4 +1,4 @@
-using Maintenance.WebAPI.Middleware;
+using CarRental.SharedKernel.Middleware;
 using Maintenance.WebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
