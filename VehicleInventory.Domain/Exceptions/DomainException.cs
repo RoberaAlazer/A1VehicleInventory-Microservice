@@ -5,7 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 
 namespace VehicleInventory.Domain.Exceptions;
-public class DomainException : Exception
+
+public class DomainException : CarRental.SharedKernel.Exceptions.DomainException
 {
     public DomainException(string message) : base(message) { }
 }
