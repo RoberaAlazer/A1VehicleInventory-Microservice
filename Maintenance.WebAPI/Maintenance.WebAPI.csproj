@@ -4,10 +4,13 @@
     <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>bbff71d8-c02f-4edd-abe0-da703c84d6e7</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
   <ItemGroup>
 	  <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.0" />
+	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
 	  <ProjectReference Include="..\CarRental.SharedKernel\CarRental.SharedKernel.csproj" />
 	  <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>

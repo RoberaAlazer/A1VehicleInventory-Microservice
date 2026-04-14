@@ -1,0 +1,93 @@
+version: '3.8'
+
+services:
+
+  gateway:
+    build:
+      context: .
+      dockerfile: ApiGateway/Dockerfile
+      args:
+        BUILD_CONFIGURATION: Release
+    container_name: carrental_gateway
+    ports:
+      - "7135:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+    depends_on:
+      - inventory-api
+      - maintenance-api
+      - customers-api
+    networks:
+      - carrental-network
+
+  inventory-api:
+    build:
+      context: .
+      dockerfile: VehicleInventory.WebAPI/Dockerfile
+      args:
+        BUILD_CONFIGURATION: Release
+    container_name: inventory-api
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__VehicleInventoryDb=Server=host.docker.internal,1433;Database=VehicleInventoryDb;User Id=dockeruser;Password=YourStrongPassword123!;TrustServerCertificate=True;
+    ports:
+      - "5201:8080"
+    networks:
+      - carrental-network
+
+  maintenance-api:
+    build:
+      context: .
+      dockerfile: Maintenance.WebAPI/Dockerfile
+      args:
+        BUILD_CONFIGURATION: Release
+    container_name: maintenance-api
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5202:8080"
+    networks:
+      - carrental-network
+
+  customers-api:
+    build:
+      context: .
+      dockerfile: Robbiealazer8768364_Week3/Dockerfile
+      args:
+        BUILD_CONFIGURATION: Release
+    container_name: customers-api
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__DefaultConnection=Server=host.docker.internal,1433;Database=CustomersProfile;User Id=dockeruser;Password=YourStrongPassword123!;TrustServerCertificate=True;
+    ports:
+      - "5203:8080"
+    networks:
+      - carrental-network
+
+  mvc-client:
+    build:
+      context: .
+      dockerfile: 8768364RobbieAlazer_MVC/Dockerfile
+      args:
+        BUILD_CONFIGURATION: Release
+    container_name: mvc-client
+    environment:
+      - ASPNETCORE_URLS=http://+:8080
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ApiGateway__BaseUrl=http://gateway:8080/
+      - ApiGateway__ApiKey=my-secret-key-12345
+      - ConnectionStrings__DefaultConnection=Server=host.docker.internal,1433;Database=CustomersProfile;User Id=dockeruser;Password=YourStrongPassword123!;TrustServerCertificate=True;
+    ports:
+      - "5200:8080"
+    depends_on:
+      - gateway
+    networks:
+      - carrental-network
+
+networks:
+  carrental-network:
+    driver: bridge
